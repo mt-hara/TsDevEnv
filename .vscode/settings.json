@@ -1,0 +1,37 @@
+{
+  // html formatter setting(vscode default)
+  "html.format.enable": true,
+  "html.format.indentInnerHtml": true,
+  "html.format.indentHandlebars": false,
+  "html.format.extraLiners": "head, body, /html",
+  "html.format.wrapAttributes": "auto",
+  "html.format.endWithNewline": false,
+  "html.format.preserveNewLines": true,
+  "emmet.variables": {
+    "lang": "ja"
+  },
+  // LiveServer Setting
+  "liveServer.settings.CustomBrowser": "chrome",
+  "liveServer.settings.multiRootWorkspaceName":"settings.json",
+  "liveServer.settings.useBrowserPreview": true,
+  "browser-preview.startUrl": "",
+
+  // editor 自動フォーマット設定
+  "editor.formatOnType": false,
+  // "editor.formatOnSave": false,
+  "eslint.enable": true,
+  "eslint.run": "onType",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  // CSS fileExtensions
+  "css.fileExtensions": [
+    "css",
+    "scss"
+  ]
+    // node.js module intellisense settring
+  // "node-module-intellisense.scanBuiltinModules": true,
+  // "node-module-intellisense.scanDevDependencies": false,
+  // "node-module-intellisense.scanFileModules": false,
+  // "node-module-intellisense.modulePaths": ["${workspaceFolder}"]
+}

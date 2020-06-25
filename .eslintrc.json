@@ -1,0 +1,52 @@
+{
+    "env": {
+        "es6": true,
+        "node": true,
+        "browser": true,
+        "commonjs": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "prettier/@typescript-eslint",
+        "prettier/react",
+        "plugin:prettier/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "ecmaVersion": 2018,
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        },
+        "sourceType": "module"
+    },
+    "settings": {
+        "react":{
+            "version":"detect"
+        }
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "react",
+        "react-hooks"
+    ],
+    "rules": {
+        "no-console":"off",
+        "react/prop-types":"off"
+    },
+    "overrides": [
+        {
+            "files":["*.js"],
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "off",
+                "@typescript-eslint/no-var-requires": "off",
+                "@typescript-eslint/explicit-function-return-type": "off"
+                // "no-unexpected-multiline":"off",
+
+            }
+        }
+    ]
+}
