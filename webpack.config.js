@@ -29,8 +29,14 @@ const main = {
      */
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
+        enforce: "pre",
         loader: "eslint-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(js|jsx)$/,
+        loader: "babel-loader",
         exclude: /node_modules/,
       },
       {
@@ -62,8 +68,14 @@ const preload = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|jsx)$/,
+        enforce: "pre",
         loader: "eslint-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(js|jsx)$/,
+        loader: "babel-loader",
         exclude: /node_modules/,
       },
       {
@@ -87,7 +99,7 @@ const renderer = {
     extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
   },
   entry: {
-    renderer: "./src/renderer.tsx",
+    renderer: path.join(__dirname, "src", "renderer"), // "./src/renderer.tsx",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -95,6 +107,17 @@ const renderer = {
   },
   module: {
     rules: [
+      {
+        test: /\.(js|jsx)$/,
+        enforce: "pre",
+        loader: "eslint-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(js|jsx)$/,
+        loader: "babel-loader",
+        exclude: /node_modules/,
+      },
       {
         test: /\.tsx?$/,
         loader: "ts-loader",

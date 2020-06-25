@@ -39,6 +39,7 @@
     },
     "overrides": [
         {
+            "parser": "babel-eslint",
             "files":["*.js"],
             "rules": {
                 "@typescript-eslint/no-explicit-any": "off",
