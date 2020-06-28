@@ -10,7 +10,7 @@ const main = {
   target: "electron-main",
   mode: isDevelopment ? "development" : "production",
   resolve: {
-    extensions: [".js", ".ts", ".json"],
+    extensions: [".js", ".ts", ".tsx", ".json"],
   },
   // エントリファイル
   entry: {
@@ -40,7 +40,7 @@ const main = {
         exclude: /node_modules/,
       },
       {
-        test: /\.ts$/,
+        test: /\.(ts|tsx)$/,
         loader: "ts-loader",
         exclude: /node_modules/,
       },
@@ -56,7 +56,7 @@ const preload = {
   target: "electron-preload",
   mode: isDevelopment ? "development" : "production",
   resolve: {
-    extensions: [".js", ".ts", ".json"],
+    extensions: [".js", ".ts", ".tsx", ".json"],
   },
   entry: {
     preload: path.join(__dirname, "src", "preload"), //"./src/preload.ts",
@@ -79,7 +79,7 @@ const preload = {
         exclude: /node_modules/,
       },
       {
-        test: /\.ts$/,
+        test: /\.(ts|tsx)$/,
         loader: "ts-loader",
         exclude: /node_modules/,
       },
@@ -119,7 +119,7 @@ const renderer = {
         exclude: /node_modules/,
       },
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|tsx)?$/,
         loader: "ts-loader",
         exclude: /node_modules/,
       },
