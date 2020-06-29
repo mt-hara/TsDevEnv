@@ -19,6 +19,8 @@ const createWindow = () => {
   win.webContents.openDevTools();
 };
 
+app.allowRendererProcessReuse = true;
+
 app.on("ready", createWindow);
 
 app.on("window-all-closed", () => {
