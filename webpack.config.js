@@ -1,35 +1,51 @@
+const glob = require("glob");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+const TerserPlugin = require("terser-webpack-plugin");
+const entries = {};
 const isDevelopment = process.env.NODE_ENV === "development";
+const rendererDir = "./src/renderer/";
 
-/**エディタ補完を機能させるために方定義ファイルをインポート */
+/**
+ * レンダラープロセスのJSファイルを1本化せずに複数ファイルとして
+ * Bundleを実行するために、ディレクトリ内のファイルを取得して、
+ * entriesへ格納
+ */
+// glob
+//   .sync("**/*.+(js|jsx|ts|tsx)", {
+//     cwd: rendererDir,
+//     ignore: "main.js",
+//     // ignore: path.join(__dirname, "src", "main"),
+//   })
+//   .map(function (file) {
+//     entries[file] = path.resolve(rendererDir, file);
+//   });
+
+glob.sync(`${rendererDir}/*.{js,jsx,ts,tsx}`).forEach((files) => {
+  entries[path.parse(files).base] = files;
+});
+
 /**@type import("webpack").Configuration */
 const main = {
   // メインプロセス設定
   target: "electron-main",
   mode: isDevelopment ? "development" : "production",
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".json"],
+    extensions: [".js", ".jsx", ".ts", "tsx", ".json"],
   },
-  // エントリファイル
+  // エントリーファイル
   entry: {
-    main: path.join(__dirname, "src", "main"), // "./src/main.ts",
+    main: path.join(__dirname, "src", "main"),
   },
-  // バンドル済みファイル保存場所
+  // アウトプット先 ファイル名をmain.jsに設定
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].js",
   },
   module: {
-    /**
-     * .js拡張子のファイルはeslint-loaderで処理
-     * .ts拡張子のファイルはts-loaderで処理
-     * node_modulesは対象外
-     */
     rules: [
       {
-        test: /\.(js|jsx)$/,
+        test: /\/(js|jsx)$/,
         enforce: "pre",
         loader: "eslint-loader",
         exclude: /node_modules/,
@@ -41,25 +57,39 @@ const main = {
       },
       {
         test: /\.(ts|tsx)$/,
+        enforce: "pre",
+        loader: "ts-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(ts|tsx)$/,
         loader: "ts-loader",
         exclude: /node_modules/,
       },
     ],
   },
-  // developmentモードではソースマップをつける
-  devtool: isDevelopment ? "#inline-source-map" : false,
+  devtool: isDevelopment ? "#inline-souce-map" : false,
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        sourceMap: true,
+        extractComments: false,
+      }),
+    ],
+  },
 };
 
 /**@type import("webpack").Configuration */
 const preload = {
-  // preloadファイル設定用
+  // preloadファイル設定
   target: "electron-preload",
   mode: isDevelopment ? "development" : "production",
   resolve: {
-    extensions: [".js", ".ts", ".tsx", ".json"],
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
   },
   entry: {
-    preload: path.join(__dirname, "src", "preload"), //"./src/preload.ts",
+    preload: path.join(__dirname, "src", "preload"),
   },
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -80,30 +110,42 @@ const preload = {
       },
       {
         test: /\.(ts|tsx)$/,
+        enforce: "pre",
+        loader: "ts-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(ts|tsx)$/,
         loader: "ts-loader",
         exclude: /node_modules/,
       },
     ],
   },
-  devtool: isDevelopment ? "#inline-source-map" : false,
+  devtool: isDevelopment ? "#inline-souce-map" : false,
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        sourceMap: true,
+        extractComments: false,
+      }),
+    ],
+  },
 };
 
-/**レンダラープロセス設定 */
 /**@type import("webpack").Configuration */
 const renderer = {
-  // セキュリティ対策として "Web"を指定
-  // erectron-rendererはNG
+  // レンダラープロセス設定
+  // セキュリティ対策としてWebを指定する
   target: "web",
-  mode: isDevelopment ? "development" : "production",
+  mode: "development",
   resolve: {
-    extensions: [".js", ".ts", ".jsx", ".tsx", ".json"],
+    extensions: [".js", "jsx", ".ts", ".tsx", ".json"],
   },
-  entry: {
-    renderer: path.join(__dirname, "src", "renderer"), // "./src/renderer.tsx",
-  },
+  entry: entries,
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name].js",
+    path: path.join(__dirname, "dist"),
+    filename: "./js/" + "[name]",
   },
   module: {
     rules: [
@@ -119,27 +161,35 @@ const renderer = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(ts|tsx)?$/,
+        test: /\.(ts|tsx)$/,
+        enforce: "pre",
+        loader: "tes-loader",
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(ts|tsx)$/,
         loader: "ts-loader",
         exclude: /node_modules/,
       },
     ],
   },
+  devtool: isDevelopment ? "#inline-souce-map" : false,
   plugins: [
-    /**
-     * バンドル済みJSファイルを<script>タグつぉいて差し込んだ
-     * HTMLファイルを出力する
-     */
     new HtmlWebpackPlugin({
       template: "./src/index.html",
+      filename: "./index.html",
+      chunks: ["index.js"],
     }),
   ],
-  /**
-   * developmentモードはソースマップをつけないと
-   * Electronのでボロっパーコンソールに
-   * 'Uncaught EventError'が表示されるので注意する
-   */
-  devtool: isDevelopment ? "#inline-source-map" : false,
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        sourceMap: true,
+        extractComments: false,
+      }),
+    ],
+  },
 };
 
 module.exports = [main, preload, renderer];
